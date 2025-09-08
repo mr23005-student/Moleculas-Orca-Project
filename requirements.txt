@@ -1,0 +1,6 @@
+numpy
+matplotlib
+scipy
+rdkit
+py3Dmol
+reportlab
