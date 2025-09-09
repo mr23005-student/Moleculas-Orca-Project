@@ -1,6 +1,9 @@
+streamlit
+pandas
+reportlab
+py3Dmol
 numpy
 matplotlib
+selenium
 scipy
 rdkit
-py3Dmol
-reportlab

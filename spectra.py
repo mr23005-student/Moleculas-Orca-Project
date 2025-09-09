@@ -1,46 +1,28 @@
+# spectra.py
 import os
-import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-def plot_ir_spectrum(molfile, freqs, intensidades, ancho=20.0):
+def plot_ir_spectrum(molfile, freqs, intensidades):
+    """Genera un espectro IR y lo guarda como PNG.
+    Si no hay intensidades, usa 1.0 para mostrar picos.
     """
-    Genera un espectro IR simulado con picos gaussianos.
-    - freqs: lista de frecuencias (cm-1)
-    - intensidades: lista de intensidades relativas
-    - ancho: FWHM (ancho a media altura) en cm-1 para las gaussianas
-    """
-    if not freqs or not intensidades:
-        print("⚠️ No hay frecuencias para graficar.")
-        return None
-
     os.makedirs("results/espectros", exist_ok=True)
-    pngfile = os.path.join("results/espectros", os.path.basename(molfile).replace(".xyz", "_IR.png"))
+    pngfile = os.path.join(
+        "results/espectros",
+        os.path.basename(molfile).replace(".xyz", "_IR.png")
+    )
 
-    # Crear eje de frecuencias (x)
-    x = np.linspace(400, 4000, 5000)  # rango típico IR
+    # Si todas las intensidades son 0 → asignar 1.0
+    if not intensidades or all(i == 0.0 for i in intensidades):
+        intensidades = [1.0] * len(freqs)
 
-    # Convertir ancho FWHM a sigma
-    sigma = ancho / (2 * np.sqrt(2 * np.log(2)))
-
-    # Construir espectro con gaussianas
-    y = np.zeros_like(x)
-    for f, inten in zip(freqs, intensidades):
-        if inten <= 0:   # ⚠️ asegurar que siempre haya algo
-            inten = 1.0
-        y += inten * np.exp(-(x - f)**2 / (2 * sigma**2))
-
-    # Normalizar
-    if y.max() > 0:
-        y /= y.max()
-
-    # Graficar
-    plt.figure(figsize=(8, 4))
-    plt.plot(x, y, color="blue")
-    plt.title(f"Espectro IR simulado de {os.path.basename(molfile)}")
-    plt.xlabel("Número de onda (cm⁻¹)")
-    plt.ylabel("Absorbancia (a.u.)")
-    plt.xlim(4000, 400)  # Escala inversa típica IR
+    plt.figure(figsize=(6, 4))
+    plt.plot(freqs, intensidades, color="blue")
+    plt.title(f"Espectro IR de {os.path.basename(molfile)}")
+    plt.xlabel("Frecuencia (cm⁻¹)")
+    plt.ylabel("Intensidad (KM/mol o normalizada)")
+    plt.grid(True, linestyle="--", alpha=0.6)
     plt.tight_layout()
     plt.savefig(pngfile, dpi=300)
     plt.close()
@@ -52,7 +34,14 @@ def plot_ir_spectrum(molfile, freqs, intensidades, ancho=20.0):
 def export_csv(molfile, freqs, intensidades):
     """Exporta frecuencias e intensidades IR a CSV."""
     os.makedirs("results/espectros", exist_ok=True)
-    csvfile = os.path.join("results/espectros", os.path.basename(molfile).replace(".xyz", "_IR.csv"))
+    csvfile = os.path.join(
+        "results/espectros",
+        os.path.basename(molfile).replace(".xyz", "_IR.csv")
+    )
+
+    # Si todas las intensidades son 0 → asignar 1.0
+    if not intensidades or all(i == 0.0 for i in intensidades):
+        intensidades = [1.0] * len(freqs)
 
     df = pd.DataFrame({"Frecuencia (cm-1)": freqs, "Intensidad": intensidades})
     df.to_csv(csvfile, index=False)

@@ -6,98 +6,71 @@ from spectra import plot_ir_spectrum, export_csv
 from visualize import save_molecule_html
 from reportlab.pdfgen import canvas
 
-# 🔹 Ruta del ejecutable ORCA (ajústala si está en otro sitio)
+# Ruta del ejecutable de ORCA
 ORCA_BIN = "/home/jonathan/orca-6.1.0-f.0_linux_x86-64/bin/orca"
 
 
-def generar_inp(xyz_file, job="optfreq"):
-    """Genera un archivo .inp de ORCA dentro de la carpeta de la molécula."""
-    molname = os.path.splitext(os.path.basename(xyz_file))[0]
-    mol_dir = os.path.join("runs", molname)
-    inputs_dir = os.path.join(mol_dir, "inputs")
-    os.makedirs(inputs_dir, exist_ok=True)
-
+def generar_inp(xyz_file, job="optfreq", output_dir="inputs"):
+    """Genera un archivo .inp de ORCA a partir de un .xyz."""
     with open(xyz_file) as f:
         lines = f.readlines()
-
-    # Filtrar solo coordenadas válidas (evitar líneas vacías o basura)
-    coords = "".join([line for line in lines[2:] if line.strip()])
+    coords = "".join(lines[2:])
 
     inp_text = f"""! B3LYP def2-SVP Opt Freq TightSCF
 
 * xyz 0 1
 {coords}*
 """
-
-    inpfile = os.path.join(inputs_dir, f"{molname}.inp")
+    os.makedirs(output_dir, exist_ok=True)
+    inpfile = os.path.join(output_dir, os.path.basename(xyz_file).replace(".xyz", ".inp"))
     with open(inpfile, "w") as f:
         f.write(inp_text)
+    return inpfile
 
-    return inpfile, molname, mol_dir
 
-
-def ejecutar_orca(inpfile, mol_dir, molname):
-    """Ejecuta ORCA dentro de la carpeta de la molécula."""
-    outputs_dir = os.path.join(mol_dir, "outputs")
-    os.makedirs(outputs_dir, exist_ok=True)
-
-    outfile = os.path.join(outputs_dir, f"{molname}.out")
-
-    # Guardar todos los archivos auxiliares que ORCA genere en intermediates/
-    intermediates_dir = os.path.join(mol_dir, "intermediates")
+def ejecutar_orca(inpfile, intermediates_dir="outputs"):
+    """Ejecuta ORCA con un .inp y guarda la salida en outputs/."""
     os.makedirs(intermediates_dir, exist_ok=True)
-
+    outfile = os.path.join(intermediates_dir, os.path.basename(inpfile).replace(".inp", ".out"))
     with open(outfile, "w") as f:
-        subprocess.run(
-            [ORCA_BIN, os.path.abspath(inpfile)],
-            cwd=intermediates_dir,
-            stdout=f,
-            stderr=subprocess.STDOUT,
-            bufsize=1,
-            text=True
-        )
-
+        subprocess.run([ORCA_BIN, inpfile], stdout=f, stderr=subprocess.STDOUT)
     return outfile
 
 
-
-def generar_reporte_pdf(molfile, energia, freqs, intensidades):
-    """Genera un PDF con energía, frecuencias e imagen del espectro IR."""
+def generar_reporte_pdf(molfile, energia, freqs, intensidades, png_file=None, mol_png=None):
+    """Genera un PDF con energía, frecuencias IR, espectro y molécula 3D."""
     os.makedirs("results/reportes", exist_ok=True)
     pdf_file = os.path.join(
-        "results/reportes",
-        os.path.basename(molfile).replace(".xyz", "_IR.pdf")
+        "results/reportes", os.path.basename(molfile).replace(".xyz", "_IR.pdf")
     )
-
-    from reportlab.pdfgen import canvas
-    from reportlab.lib.units import cm
 
     c = canvas.Canvas(pdf_file)
     c.setFont("Helvetica-Bold", 14)
-    c.drawString(100, 800, f"Reporte de {os.path.basename(molfile)}")
+    c.drawString(100, 800, f"Reporte ORCA: {os.path.basename(molfile)}")
+
     c.setFont("Helvetica", 12)
-
-    if energia is not None:
-        c.drawString(100, 770, f"Energía total (Eh): {energia:.6f}")
+    if energia:
+        c.drawString(100, 770, f"Energía total: {energia:.6f} Eh")
     else:
-        c.drawString(100, 770, "Energía total: no encontrada")
+        c.drawString(100, 770, "⚠️ Energía no encontrada")
 
-    c.drawString(100, 750, "Frecuencias IR (cm⁻1) e Intensidades:")
+    c.drawString(100, 750, f"Número de frecuencias vibracionales: {len(freqs)}")
+
+    # Listar primeras frecuencias
     for i, (frec, inten) in enumerate(zip(freqs[:10], intensidades[:10])):
-        c.drawString(120, 730 - i*20, f"{frec:.2f} cm⁻1  ({inten:.2f})")
+        c.drawString(120, 730 - i * 20, f"{frec:.2f} cm-1 (Intensidad: {inten:.2f})")
 
-    # Insertar espectro IR como imagen
-    pngfile = os.path.join(
-        "results/espectros",
-        os.path.basename(molfile).replace(".xyz", "_IR.png")
-    )
-    if os.path.exists(pngfile):
-        c.drawImage(pngfile, 2*cm, 2*cm, width=16*cm, height=8*cm)
-    else:
-        c.drawString(100, 200, "⚠️ No se encontró la imagen del espectro IR.")
+    # 🔹 Insertar espectro IR
+    if png_file and os.path.exists(png_file):
+        c.drawImage(png_file, 100, 400, width=400, height=300)
+
+    # 🔹 Insertar molécula 3D (captura PNG generada en visualize.py)
+    if mol_png and os.path.exists(mol_png):
+        c.drawImage(mol_png, 100, 100, width=300, height=250)
 
     c.save()
     print(f"✅ Reporte generado: {pdf_file}")
+    return pdf_file
 
 
 if __name__ == "__main__":
@@ -107,34 +80,31 @@ if __name__ == "__main__":
     parser.add_argument("--csv", action="store_true", help="Exportar espectro a CSV")
     parser.add_argument("--view", action="store_true", help="Generar visualización 3D")
     parser.add_argument("--job", default="optfreq", help="Tipo de cálculo ORCA")
+    parser.add_argument("--outdir", default="runs", help="Directorio base para resultados")
     args = parser.parse_args()
 
     molfile = args.mol
-    inpfile, molname, mol_dir = generar_inp(molfile, args.job)
-    outfile = ejecutar_orca(inpfile, mol_dir, molname)
+    jobname = os.path.splitext(os.path.basename(molfile))[0]
+
+    # Crear carpetas organizadas
+    base_dir = os.path.join(args.outdir, jobname)
+    inputs_dir = os.path.join(base_dir, "inputs")
+    outputs_dir = os.path.join(base_dir, "outputs")
+
+    inpfile = generar_inp(molfile, args.job, inputs_dir)
+    outfile = ejecutar_orca(inpfile, outputs_dir)
 
     freqs, intensidades = parse_ir(outfile)
     energia = parse_energy_total(outfile)
 
-    if energia is not None:
-        print(f"✅ Energía total (Eh): {energia:.6f}")
-    else:
-        print("⚠️ Energía total no encontrada en el archivo de salida")
-
+    print(f"✅ Energía total: {energia if energia else 'No encontrada'}")
     print(f"✅ Se encontraron {len(freqs)} frecuencias vibracionales")
 
-    # 🔹 Generar siempre PNG si hay frecuencias
-    if freqs and intensidades:
-        plot_ir_spectrum(molfile, freqs, intensidades)
+    png_file = plot_ir_spectrum(molfile, freqs, intensidades) if args.csv or args.pdf else None
+    csv_file = export_csv(molfile, freqs, intensidades) if args.csv else None
+    html_file, mol_png = save_molecule_html(molfile) if args.view else (None, None)
 
     if args.pdf:
-        generar_reporte_pdf(molfile, energia, freqs, intensidades)
+        generar_reporte_pdf(molfile, energia, freqs, intensidades, png_file, mol_png)
 
-    if args.csv:
-        export_csv(molfile, freqs, intensidades)
-
-    if args.view:
-        save_molecule_html(molfile)
-
-    print(f"✅ Resultados guardados en runs/{molname}/ y results/")
-    print("¡Proceso completado!")
+    print(f"✅ Resultados guardados en {base_dir} y results/")
