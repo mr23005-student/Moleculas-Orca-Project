@@ -8,3 +8,4 @@ To-Do, Implementaciones:
   -[]Manual de uso
   -[]Limpiarlo
   -[]Mejoras de autonomia
+  -[].zip
