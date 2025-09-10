@@ -153,18 +153,37 @@ try:
             col1, col2 = st.columns(2)
 
             with col1:
-                if os.path.exists(png_path):
-                    st.subheader("📊 Espectros IR")
-                    
-                    # Obtener las tres variantes
-                    png_discrete = png_path.replace("_IR.png", "_IR_discrete.png")
-                    png_smooth = png_path.replace("_IR.png", "_IR_smooth.png")
-                    png_labeled = png_path.replace("_IR.png", "_IR_labeled.png")
-                    
-                    # Mostrar los tres espectros
-                    st.image(png_discrete, caption="Espectro IR - Picos Discretos")
-                    st.image(png_smooth, caption="Espectro IR - Suavizado")
-                    st.image(png_labeled, caption="Espectro IR - Etiquetado")
+                # Espectros IR
+                st.subheader("📊 Espectros IR")
+                
+                # Rutas de los tres tipos de espectros
+                png_discrete = f"results/espectros/{jobname}_IR_discrete.png"
+                png_smooth = f"results/espectros/{jobname}_IR_smooth.png"
+                png_labeled = f"results/espectros/{jobname}_IR_labeled.png"
+                
+                # Mostrar los tres espectros
+                if os.path.exists(png_discrete):
+                    st.markdown("### Espectro de Picos Discretos")
+                    st.image(png_discrete, caption="Picos IR individuales")
+                
+                if os.path.exists(png_smooth):
+                    st.markdown("### Espectro Suavizado")
+                    st.image(png_smooth, caption="Espectro IR suavizado")
+                
+                if os.path.exists(png_labeled):
+                    st.markdown("### Espectro con Etiquetas")
+                    st.image(png_labeled, caption="Espectro IR con frecuencias etiquetadas")
+
+                # CSV (mantener la funcionalidad existente)
+                if os.path.exists(csv_path):
+                    st.subheader("📑 Frecuencias (CSV)")
+                    with open(csv_path) as f:
+                        st.download_button(
+                            label="⬇️ Descargar CSV",
+                            data=f,
+                            file_name=f"{jobname}_IR.csv",
+                            mime="text/csv",
+                        )
 
             with col2:
                 # Molécula en 3D

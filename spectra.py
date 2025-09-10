@@ -52,11 +52,6 @@ def plot_ir_spectrum(molfile, freqs, intensidades):
 
 def plot_ir_variants(molfile, freqs, intensidades):
     """Genera tres variantes del espectro IR."""
-    # Verificar si hay datos válidos
-    if not freqs or not intensidades:
-        print("⚠️ No hay datos de espectro IR para graficar")
-        return None, None, None
-
     os.makedirs("results/espectros", exist_ok=True)
     base_name = os.path.basename(molfile).replace(".xyz", "")
     

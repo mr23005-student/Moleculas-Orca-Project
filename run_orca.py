@@ -2,7 +2,7 @@ import os
 import argparse
 import subprocess
 from parser_orca import parse_ir, parse_energy_total
-from spectra import plot_ir_spectrum, export_csv
+from spectra import plot_ir_spectrum, export_csv, plot_ir_variants
 from visualize import save_molecule_html
 from reportlab.pdfgen import canvas
 #esta es la rama raman jaja
@@ -100,7 +100,9 @@ if __name__ == "__main__":
     print(f"✅ Energía total: {energia if energia else 'No encontrada'}")
     print(f"✅ Se encontraron {len(freqs)} frecuencias vibracionales")
 
-    png_file = plot_ir_spectrum(molfile, freqs, intensidades) if args.csv or args.pdf else None
+    png_files = plot_ir_variants(molfile, freqs, intensidades) if args.csv or args.pdf else None
+    png_file = png_files[2] if png_files else None  # Usar el espectro etiquetado para el PDF
+
     csv_file = export_csv(molfile, freqs, intensidades) if args.csv else None
     html_file, mol_png = save_molecule_html(molfile) if args.view else (None, None)
 
