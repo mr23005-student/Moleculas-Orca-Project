@@ -153,21 +153,18 @@ try:
             col1, col2 = st.columns(2)
 
             with col1:
-                # Espectro IR
                 if os.path.exists(png_path):
-                    st.subheader("📊 Espectro IR")
-                    st.image(png_path, caption=f"Espectro IR de {jobname}")
-
-                # CSV
-                if os.path.exists(csv_path):
-                    st.subheader("📑 Frecuencias (CSV)")
-                    with open(csv_path) as f:
-                        st.download_button(
-                            label="⬇️ Descargar CSV",
-                            data=f,
-                            file_name=f"{jobname}_IR.csv",
-                            mime="text/csv",
-                        )
+                    st.subheader("📊 Espectros IR")
+                    
+                    # Obtener las tres variantes
+                    png_discrete = png_path.replace("_IR.png", "_IR_discrete.png")
+                    png_smooth = png_path.replace("_IR.png", "_IR_smooth.png")
+                    png_labeled = png_path.replace("_IR.png", "_IR_labeled.png")
+                    
+                    # Mostrar los tres espectros
+                    st.image(png_discrete, caption="Espectro IR - Picos Discretos")
+                    st.image(png_smooth, caption="Espectro IR - Suavizado")
+                    st.image(png_labeled, caption="Espectro IR - Etiquetado")
 
             with col2:
                 # Molécula en 3D

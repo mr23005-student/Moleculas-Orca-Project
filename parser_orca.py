@@ -69,13 +69,22 @@ def process_ir_data(freqs, intensities, start=400, end=4000, points=1000, sigma=
         points: Número de puntos para el espectro
         sigma: Ancho de los picos gaussianos
     """
+    # Verificar si hay datos
+    if not freqs or not intensities:
+        print("⚠️ No se encontraron datos de frecuencias/intensidades")
+        # Retornar datos dummy para evitar errores
+        x = np.linspace(start, end, points)
+        return x, np.zeros_like(x), []
+    
     x = np.linspace(start, end, points)
     y = np.zeros_like(x)
     
-    # Normalizar intensidades
-    max_intensity = max(intensities)
+    # Normalizar intensidades (con verificación)
+    max_intensity = max(intensities) if intensities else 1.0
     if max_intensity > 0:
         intensities = [i/max_intensity for i in intensities]
+    else:
+        intensities = [1.0] * len(freqs)
     
     # Generar curva suavizada
     for freq, inten in zip(freqs, intensities):

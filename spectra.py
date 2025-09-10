@@ -50,6 +50,63 @@ def plot_ir_spectrum(molfile, freqs, intensidades):
     print(f"✅ Espectro IR guardado en: {pngfile}")
     return pngfile
 
+def plot_ir_variants(molfile, freqs, intensidades):
+    """Genera tres variantes del espectro IR."""
+    # Verificar si hay datos válidos
+    if not freqs or not intensidades:
+        print("⚠️ No hay datos de espectro IR para graficar")
+        return None, None, None
+
+    os.makedirs("results/espectros", exist_ok=True)
+    base_name = os.path.basename(molfile).replace(".xyz", "")
+    
+    # 1. Espectro original (picos discretos)
+    pngfile1 = os.path.join("results/espectros", f"{base_name}_IR_discrete.png")
+    plt.figure(figsize=(10, 6))
+    plt.plot(freqs, intensidades, color="blue", marker='o', markersize=4)
+    plt.title(f"Espectro IR (Picos Discretos) - {base_name}")
+    plt.xlabel("Número de onda (cm⁻¹)")
+    plt.ylabel("Intensidad")
+    plt.grid(True, linestyle="--", alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(pngfile1, dpi=300)
+    plt.close()
+
+    # 2. Espectro suavizado invertido (estilo tradicional)
+    pngfile2 = os.path.join("results/espectros", f"{base_name}_IR_smooth.png")
+    x_values, y_values, peaks = process_ir_data(freqs, intensidades)
+    plt.figure(figsize=(10, 6))
+    plt.plot(x_values, y_values, color='darkblue', linewidth=1.5)
+    plt.title(f"Espectro IR (Suavizado) - {base_name}")
+    plt.xlabel("Número de onda (cm⁻¹)")
+    plt.ylabel("Transmitancia")
+    plt.grid(True, linestyle=':', alpha=0.3)
+    plt.gca().invert_yaxis()
+    plt.xlim(4000, 400)
+    plt.tight_layout()
+    plt.savefig(pngfile2, dpi=300)
+    plt.close()
+
+    # 3. Espectro con picos etiquetados
+    pngfile3 = os.path.join("results/espectros", f"{base_name}_IR_labeled.png")
+    plt.figure(figsize=(10, 6))
+    plt.plot(x_values, y_values, color='darkblue', linewidth=1.5)
+    for freq, inten in peaks:
+        if inten > 0.1:
+            plt.vlines(freq, 0, inten, colors='gray', linestyles=':', alpha=0.5)
+            plt.text(freq, inten+0.02, f'{int(freq)}', rotation=90, ha='center', va='bottom', fontsize=8)
+    plt.title(f"Espectro IR (Etiquetado) - {base_name}")
+    plt.xlabel("Número de onda (cm⁻¹)")
+    plt.ylabel("Transmitancia")
+    plt.grid(True, linestyle=':', alpha=0.3)
+    plt.gca().invert_yaxis()
+    plt.xlim(4000, 400)
+    plt.ylim(-0.05, 1.1)
+    plt.tight_layout()
+    plt.savefig(pngfile3, dpi=300)
+    plt.close()
+    
+    return pngfile1, pngfile2, pngfile3
 
 def export_csv(molfile, freqs, intensidades):
     """Exporta frecuencias e intensidades IR a CSV."""

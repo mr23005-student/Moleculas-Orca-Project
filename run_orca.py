@@ -7,7 +7,7 @@ from visualize import save_molecule_html
 from reportlab.pdfgen import canvas
 #esta es la rama raman jaja
 # Ruta del ejecutable de ORCA
-ORCA_BIN = "/home/daoc7/orca_6_1_0_linux_x86-64_shared_openmpi418/orca"
+ORCA_BIN = "/home/alexander/Imágenes/orca_6_1_0_linux_x86-64_shared_openmpi418/orca"
 
 
 def generar_inp(xyz_file, job="optfreq", output_dir="inputs"):
