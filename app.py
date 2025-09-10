@@ -195,13 +195,6 @@ try:
             progress_bar.empty()
             progress_placeholder.empty()
 
-            # Show execution log
-            st.subheader("📜 Log de ejecución")
-            if process.stdout:
-                st.text(process.stdout)
-            if process.stderr:
-                st.error(process.stderr)
-
         except Exception as e:
             progress_bar.empty()
             status_text.empty()
