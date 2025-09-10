@@ -10,28 +10,31 @@ def _to_float(x: str) -> float:
 
 # --------- IR (frecuencias + intensidades) ---------
 def parse_ir(outfile):
-    """
-    Devuelve (freqs, intensidades).
-    - Busca 'IR SPECTRUM' (freq, intensity).
-    - Si no hay intensidades, usa 'VIBRATIONAL FREQUENCIES' y asigna 1.0 como intensidad.
-    """
+    """Versión con debug"""
     with open(outfile, "r") as f:
         lines = f.readlines()
 
     freqs = []
     intens = []
-
-    # 1) IR SPECTRUM
+    
+    print(f"🔍 Analizando archivo: {outfile}")
+    
+    # Buscar sección IR SPECTRUM
     in_ir = False
-    for line in lines:
+    for i, line in enumerate(lines):
         if "IR SPECTRUM" in line.upper():
+            print(f"✅ Encontrado IR SPECTRUM en línea {i+1}")
             in_ir = True
+            # Mostrar algunas líneas siguientes para debug
+            for j in range(i, min(i+10, len(lines))):
+                print(f"Línea {j+1}: {lines[j].strip()}")
             continue
+            
         if in_ir:
-            if line.strip() == "" or "RAMAN" in line.upper() or "NORMAL MODES" in line.upper():
-                break
-            m = re.match(rf"\s*\d+\s+{_float_re}\s+{_float_re}", line)
+            # Buscar líneas de datos
+            m = re.match(rf"\s*\d+:\s+{_float_re}\s+{_float_re}", line)
             if m:
+                print(f"📊 Línea de datos: {line.strip()}")
                 fcm, inten = _to_float(m.group(1)), _to_float(m.group(2))
                 freqs.append(fcm)
                 intens.append(inten)
