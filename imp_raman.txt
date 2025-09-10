@@ -153,7 +153,7 @@ if __name__ == "__main__":
             freqs_raman, actividades_raman, laser_wavelength=args.laser
         )
 
-    print(f"✅ Energía total: {energia if energia else 'No encontrada'}")
+    print(f"[OK] Energía total: {energia if energia else 'No encontrada'}")
     print(f"✅ Se encontraron {len(freqs_ir)} frecuencias vibracionales IR")
     if args.raman:
         print(f"✅ Se encontraron {len(freqs_raman)} frecuencias vibracionales Raman")

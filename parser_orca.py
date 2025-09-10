@@ -17,13 +17,14 @@ def parse_ir(outfile):
     freqs = []
     intens = []
     
-    print(f"🔍 Analizando archivo: {outfile}")
+    print(f"[INFO] Analizando archivo: {outfile}")
+
     
     # Buscar sección IR SPECTRUM
     in_ir = False
     for i, line in enumerate(lines):
         if "IR SPECTRUM" in line.upper():
-            print(f"✅ Encontrado IR SPECTRUM en línea {i+1}")
+            print(f"[OK] Encontrado IR SPECTRUM en línea {i+1}")
             in_ir = True
             # Mostrar algunas líneas siguientes para debug
             for j in range(i, min(i+10, len(lines))):
@@ -34,7 +35,7 @@ def parse_ir(outfile):
             # Buscar líneas de datos
             m = re.match(rf"\s*\d+:\s+{_float_re}\s+{_float_re}", line)
             if m:
-                print(f"📊 Línea de datos: {line.strip()}")
+                print(f"[DATA] Línea de datos: {line.strip()}")
                 fcm, inten = _to_float(m.group(1)), _to_float(m.group(2))
                 freqs.append(fcm)
                 intens.append(inten)

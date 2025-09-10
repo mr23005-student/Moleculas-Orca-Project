@@ -7,8 +7,7 @@ from visualize import save_molecule_html
 from reportlab.pdfgen import canvas
 
 # Ruta del ejecutable de ORCA
-ORCA_BIN = "/usr/bin/orca"
-
+ORCA_BIN = r"C:\Orca\orca.exe"
 
 def generar_inp(xyz_file, job="optfreq", output_dir="inputs"):
     """Genera un archivo .inp de ORCA a partir de un .xyz."""
@@ -52,7 +51,7 @@ def generar_reporte_pdf(molfile, energia, freqs, intensidades, png_file=None, mo
     if energia:
         c.drawString(100, 770, f"Energía total: {energia:.6f} Eh")
     else:
-        c.drawString(100, 770, "⚠️ Energía no encontrada")
+        c.drawString(100, 770, "[ADVERTENCIA] Energía no encontrada")
 
     c.drawString(100, 750, f"Número de frecuencias vibracionales: {len(freqs)}")
 
@@ -69,7 +68,7 @@ def generar_reporte_pdf(molfile, energia, freqs, intensidades, png_file=None, mo
         c.drawImage(mol_png, 100, 100, width=300, height=250)
 
     c.save()
-    print(f"✅ Reporte generado: {pdf_file}")
+    print(f"[OK] Reporte generado: {pdf_file}")
     return pdf_file
 
 
@@ -97,8 +96,9 @@ if __name__ == "__main__":
     freqs, intensidades = parse_ir(outfile)
     energia = parse_energy_total(outfile)
 
-    print(f"✅ Energía total: {energia if energia else 'No encontrada'}")
-    print(f"✅ Se encontraron {len(freqs)} frecuencias vibracionales")
+    print(f"[OK] Energía total: {energia if energia else 'No encontrada'}")
+    print(f"[OK] Se encontraron {len(freqs)} frecuencias vibracionales")
+
 
     png_file = plot_ir_spectrum(molfile, freqs, intensidades) if args.csv or args.pdf else None
     csv_file = export_csv(molfile, freqs, intensidades) if args.csv else None
@@ -107,4 +107,5 @@ if __name__ == "__main__":
     if args.pdf:
         generar_reporte_pdf(molfile, energia, freqs, intensidades, png_file, mol_png)
 
-    print(f"✅ Resultados guardados en {base_dir} y results/")
+    print(f"[OK] Resultados guardados en {base_dir} y results/")
+

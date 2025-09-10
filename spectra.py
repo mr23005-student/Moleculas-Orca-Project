@@ -27,7 +27,7 @@ def plot_ir_spectrum(molfile, freqs, intensidades):
     plt.savefig(pngfile, dpi=300)
     plt.close()
 
-    print(f"✅ Espectro IR guardado en: {pngfile}")
+    print(f"[OK] Espectro IR guardado en: {pngfile}")
     return pngfile
 
 
@@ -46,5 +46,5 @@ def export_csv(molfile, freqs, intensidades):
     df = pd.DataFrame({"Frecuencia (cm-1)": freqs, "Intensidad": intensidades})
     df.to_csv(csvfile, index=False)
 
-    print(f"✅ Datos exportados a: {csvfile}")
+    print(f"[OK] Datos exportados a: {csvfile}")
     return csvfile

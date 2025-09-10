@@ -43,5 +43,5 @@ def save_molecule_html(xyz_file, outdir="results/moleculas_3d"):
         print(f"⚠️ No se pudo generar PNG estático de la molécula: {e}")
         png_file = None
 
-    print(f"✅ Visualización 3D guardada en: {html_file}")
+    print(f"[OK] Visualización 3D guardada en: {html_file}")
     return html_file, png_file
