@@ -5,6 +5,8 @@ import tempfile
 import py3Dmol
 import streamlit.components.v1 as components
 
+st.config.set_option("browser.gatherUsageStats", False)
+
 # Directorio base del proyecto
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 RUN_ORCA = os.path.join(PROJECT_DIR, "run_orca.py")
