@@ -1,0 +1,296 @@
+Basándome en tu código existente, voy a implementar la funcionalidad para espectros Raman. Aquí están las modificaciones necesarias:
+
+### 1. Modificaciones en `run_orca.py`
+
+```python
+import os
+import argparse
+import subprocess
+from parser_orca import parse_ir, parse_energy_total, parse_raman
+from spectra import plot_ir_spectrum, plot_raman_spectrum, export_csv, export_raman_csv
+from visualize import save_molecule_html
+from reportlab.pdfgen import canvas
+import numpy as np
+
+# Ruta del ejecutable de ORCA
+ORCA_BIN = "/home/daoc7/orca_6_1_0_linux_x86-64_shared_openmpi418/orca"
+
+def generar_inp(xyz_file, job="optfreq", output_dir="inputs", raman=False):
+    """Genera un archivo .inp de ORCA a partir de un .xyz."""
+    with open(xyz_file) as f:
+        lines = f.readlines()
+    coords = "".join(lines[2:])
+
+    # Añadir Raman si se solicita
+    keywords = "! B3LYP def2-SVP Opt Freq TightSCF"
+    if raman:
+        keywords += " Raman"
+
+    inp_text = f"""{keywords}
+
+* xyz 0 1
+{coords}*
+"""
+    os.makedirs(output_dir, exist_ok=True)
+    inpfile = os.path.join(output_dir, os.path.basename(xyz_file).replace(".xyz", ".inp"))
+    with open(inpfile, "w") as f:
+        f.write(inp_text)
+    return inpfile
+
+def ejecutar_orca(inpfile, intermediates_dir="outputs"):
+    """Ejecuta ORCA con un .inp y guarda la salida en outputs/."""
+    os.makedirs(intermediates_dir, exist_ok=True)
+    outfile = os.path.join(intermediates_dir, os.path.basename(inpfile).replace(".inp", ".out"))
+    with open(outfile, "w") as f:
+        subprocess.run([ORCA_BIN, inpfile], stdout=f, stderr=subprocess.STDOUT)
+    return outfile
+
+def calcular_intensidades_raman(freqs, actividades, laser_wavelength=532, T=298, gamma=10):
+    """Calcula intensidades Raman a partir de actividades."""
+    # Convertir longitud de onda a número de onda (cm⁻¹)
+    laser_wn = 1e7 / laser_wavelength
+    
+    # Constantes físicas
+    h = 6.626e-34  # J·s
+    c = 3e10       # cm/s
+    k = 1.381e-23  # J/K
+    
+    # Calcular intensidades
+    intensidades = []
+    for freq, actividad in zip(freqs, actividades):
+        # Factor de corrección térmica y dispersión
+        beta = h * c / (k * T)
+        intensidad = ((laser_wn - freq)**4 * actividad) / (freq * (1 - np.exp(-beta * freq)))
+        intensidades.append(intensidad)
+    
+    # Normalizar intensidades
+    if intensidades:
+        max_intensity = max(intensidades)
+        intensidades = [i / max_intensity for i in intensidades]
+    
+    # Aplicar broadening Lorentziano
+    wn_grid = np.linspace(0, 4000, 1000)
+    spectrum = np.zeros_like(wn_grid)
+    for i, freq in enumerate(freqs):
+        spectrum += intensidades[i] * gamma / ((wn_grid - freq)**2 + gamma**2)
+    
+    return wn_grid, spectrum, intensidades
+
+def generar_reporte_pdf(molfile, energia, freqs_ir, intensidades_ir, freqs_raman=None, intensidades_raman=None, 
+                        png_ir=None, png_raman=None, mol_png=None):
+    """Genera un PDF con energía, espectros IR y Raman, y molécula 3D."""
+    os.makedirs("results/reportes", exist_ok=True)
+    pdf_file = os.path.join(
+        "results/reportes", os.path.basename(molfile).replace(".xyz", "_reporte.pdf")
+    )
+
+    c = canvas.Canvas(pdf_file)
+    c.setFont("Helvetica-Bold", 14)
+    c.drawString(100, 800, f"Reporte ORCA: {os.path.basename(molfile)}")
+
+    c.setFont("Helvetica", 12)
+    if energia:
+        c.drawString(100, 770, f"Energía total: {energia:.6f} Eh")
+    else:
+        c.drawString(100, 770, "⚠️ Energía no encontrada")
+
+    c.drawString(100, 750, f"Número de frecuencias vibracionales: {len(freqs_ir)}")
+    
+    # Espectro IR
+    if png_ir and os.path.exists(png_ir):
+        c.drawString(100, 730, "Espectro IR:")
+        c.drawImage(png_ir, 100, 500, width=400, height=200)
+    
+    # Espectro Raman
+    if png_raman and os.path.exists(png_raman):
+        c.drawString(100, 300, "Espectro Raman:")
+        c.drawImage(png_raman, 100, 100, width=400, height=200)
+
+    # Molécula 3D
+    if mol_png and os.path.exists(mol_png):
+        c.drawImage(mol_png, 500, 500, width=200, height=150)
+
+    c.save()
+    print(f"✅ Reporte generado: {pdf_file}")
+    return pdf_file
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--mol", required=True, help="Archivo .xyz de entrada")
+    parser.add_argument("--pdf", action="store_true", help="Generar reporte PDF")
+    parser.add_argument("--csv", action="store_true", help="Exportar espectro a CSV")
+    parser.add_argument("--view", action="store_true", help="Generar visualización 3D")
+    parser.add_argument("--job", default="optfreq", help="Tipo de cálculo ORCA")
+    parser.add_argument("--outdir", default="runs", help="Directorio base para resultados")
+    parser.add_argument("--raman", action="store_true", help="Incluir cálculo Raman")
+    parser.add_argument("--laser", type=float, default=532, help="Longitud de onda del láser en nm (para Raman)")
+    args = parser.parse_args()
+
+    molfile = args.mol
+    jobname = os.path.splitext(os.path.basename(molfile))[0]
+
+    # Crear carpetas organizadas
+    base_dir = os.path.join(args.outdir, jobname)
+    inputs_dir = os.path.join(base_dir, "inputs")
+    outputs_dir = os.path.join(base_dir, "outputs")
+
+    # Generar input con Raman si se solicita
+    inpfile = generar_inp(molfile, args.job, inputs_dir, raman=args.raman)
+    outfile = ejecutar_orca(inpfile, outputs_dir)
+
+    # Parsear resultados
+    freqs_ir, intensidades_ir = parse_ir(outfile)
+    energia = parse_energy_total(outfile)
+    
+    # Procesar datos Raman si están disponibles
+    freqs_raman, actividades_raman = parse_raman(outfile)
+    raman_wn_grid = None
+    raman_spectrum = None
+    raman_intensidades = None
+    
+    if args.raman and freqs_raman:
+        raman_wn_grid, raman_spectrum, raman_intensidades = calcular_intensidades_raman(
+            freqs_raman, actividades_raman, laser_wavelength=args.laser
+        )
+
+    print(f"✅ Energía total: {energia if energia else 'No encontrada'}")
+    print(f"✅ Se encontraron {len(freqs_ir)} frecuencias vibracionales IR")
+    if args.raman:
+        print(f"✅ Se encontraron {len(freqs_raman)} frecuencias vibracionales Raman")
+
+    # Generar gráficos y exportar datos
+    png_ir = plot_ir_spectrum(molfile, freqs_ir, intensidades_ir) if args.csv or args.pdf else None
+    csv_ir = export_csv(molfile, freqs_ir, intensidades_ir, suffix="IR") if args.csv else None
+    
+    png_raman = None
+    csv_raman = None
+    if args.raman and freqs_raman:
+        png_raman = plot_raman_spectrum(molfile, raman_wn_grid, raman_spectrum) if args.csv or args.pdf else None
+        csv_raman = export_raman_csv(molfile, freqs_raman, raman_intensidades) if args.csv else None
+
+    html_file, mol_png = save_molecule_html(molfile) if args.view else (None, None)
+
+    if args.pdf:
+        generar_reporte_pdf(molfile, energia, freqs_ir, intensidades_ir, 
+                           freqs_raman, raman_intensidades, png_ir, png_raman, mol_png)
+
+    print(f"✅ Resultados guardados en {base_dir} y results/")
+```
+
+### 2. Modificaciones en `parser_orca.py`
+
+```python
+# Añadir esta función para parsear datos Raman
+def parse_raman(outfile):
+    """
+    Extrae frecuencias y actividades Raman desde el output de ORCA.
+    Retorna dos listas: frecuencias y actividades.
+    """
+    with open(outfile, 'r') as f:
+        lines = f.readlines()
+
+    freqs = []
+    activities = []
+    in_raman_section = False
+    
+    for line in lines:
+        if "RAMAN SPECTRUM" in line.upper():
+            in_raman_section = True
+            continue
+        if in_raman_section:
+            if line.strip() == '' or "IR SPECTRUM" in line.upper():
+                break
+            # Buscar líneas con datos: modo, frecuencia, actividad, depolarización
+            parts = re.split(r'\s+', line.strip())
+            if len(parts) >= 3 and parts[0].isdigit():
+                try:
+                    freq = _to_float(parts[1])
+                    activity = _to_float(parts[2])
+                    freqs.append(freq)
+                    activities.append(activity)
+                except ValueError:
+                    continue
+    
+    # Fallback: buscar "RAMAN ACTIVITIES"
+    if not freqs:
+        in_raman_act = False
+        for line in lines:
+            if "RAMAN ACTIVITIES" in line.upper():
+                in_raman_act = True
+                continue
+            if in_raman_act:
+                if line.strip() == '':
+                    break
+                parts = re.split(r'\s+', line.strip())
+                if len(parts) >= 3 and parts[0].isdigit():
+                    try:
+                        freq = _to_float(parts[1])
+                        activity = _to_float(parts[2])
+                        freqs.append(freq)
+                        activities.append(activity)
+                    except ValueError:
+                        continue
+    
+    return freqs, activities
+```
+
+### 3. Modificaciones en `spectra.py`
+
+```python
+import numpy as np
+
+def plot_raman_spectrum(molfile, wn_grid, spectrum):
+    """Genera un espectro Raman y lo guarda como PNG."""
+    os.makedirs("results/espectros", exist_ok=True)
+    pngfile = os.path.join(
+        "results/espectros",
+        os.path.basename(molfile).replace(".xyz", "_Raman.png")
+    )
+
+    plt.figure(figsize=(6, 4))
+    plt.plot(wn_grid, spectrum, 'r-', linewidth=1.5)
+    plt.title(f"Espectro Raman de {os.path.basename(molfile)}")
+    plt.xlabel("Raman Shift (cm⁻¹)")
+    plt.ylabel("Intensidad Normalizada")
+    plt.grid(True, linestyle="--", alpha=0.6)
+    plt.xlim(0, 4000)
+    plt.ylim(0, 1.05)
+    plt.tight_layout()
+    plt.savefig(pngfile, dpi=300)
+    plt.close()
+
+    print(f"✅ Espectro Raman guardado en: {pngfile}")
+    return pngfile
+
+def export_raman_csv(molfile, freqs, intensidades):
+    """Exporta frecuencias e intensidades Raman a CSV."""
+    os.makedirs("results/espectros", exist_ok=True)
+    csvfile = os.path.join(
+        "results/espectros",
+        os.path.basename(molfile).replace(".xyz", "_Raman.csv")
+    )
+
+    df = pd.DataFrame({"Frecuencia (cm-1)": freqs, "Intensidad": intensidades})
+    df.to_csv(csvfile, index=False)
+
+    print(f"✅ Datos Raman exportados a: {csvfile}")
+    return csvfile
+```
+
+### 4. Uso del código mejorado
+
+Ahora puedes ejecutar el código con la opción `--raman` para incluir el cálculo de espectros Raman:
+
+```bash
+python run_orca.py --mol molecula.xyz --raman --laser 532 --pdf --csv --view
+```
+
+### Notas importantes:
+
+1. El cálculo Raman se activa con la opción `--raman` y añade la palabra clave `Raman` al input de ORCA.
+2. La longitud de onda del láser se puede especificar con `--laser` (por defecto 532 nm).
+3. Los espectros Raman se guardan en la carpeta `results/espectros/` con los sufijos `_Raman.png` y `_Raman.csv`.
+4. El reporte PDF incluye tanto el espectro IR como el Raman (si está disponible).
+5. La función `calcular_intensidades_raman` aplica la fórmula de conversión de actividades a intensidades y el broadening Lorentziano.
+
+Estas modificaciones te permitirán generar espectros Raman a partir de cálculos de ORCA y integrarlos en tu framework existente.
