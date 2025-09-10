@@ -1,5 +1,6 @@
 # parser_orca.py
 import re
+import numpy as np
 
 # --------- Utilidades ---------
 _float_re = r"(-?\d+(?:\.\d+)?(?:[EeDd][\+\-]?\d+)?)"
@@ -57,6 +58,34 @@ def parse_ir(outfile):
                 intens.append(1.0)  # asigna intensidad simulada para graficar
 
     return freqs, intens
+
+def process_ir_data(freqs, intensities, start=400, end=4000, points=1000, sigma=15.0):
+    """Procesa datos para generar un espectro IR suavizado.
+    
+    Args:
+        freqs: Lista de frecuencias
+        intensities: Lista de intensidades
+        start, end: Rango de frecuencias (cm-1)
+        points: Número de puntos para el espectro
+        sigma: Ancho de los picos gaussianos
+    """
+    x = np.linspace(start, end, points)
+    y = np.zeros_like(x)
+    
+    # Normalizar intensidades
+    max_intensity = max(intensities)
+    if max_intensity > 0:
+        intensities = [i/max_intensity for i in intensities]
+    
+    # Generar curva suavizada
+    for freq, inten in zip(freqs, intensities):
+        y += inten * np.exp(-(x - freq)**2 / (2 * sigma**2))
+    
+    # Normalizar resultado final
+    if np.max(y) > 0:
+        y = y / np.max(y)
+    
+    return x, y, list(zip(freqs, intensities))
 
 # --------- Raman ---------
 def parse_raman(outfile):
