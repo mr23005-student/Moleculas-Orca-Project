@@ -5,9 +5,9 @@ from parser_orca import parse_ir, parse_energy_total
 from spectra import plot_ir_spectrum, export_csv
 from visualize import save_molecule_html
 from reportlab.pdfgen import canvas
-
+#esta es la rama raman jaja
 # Ruta del ejecutable de ORCA
-ORCA_BIN = "/usr/bin/orca"
+ORCA_BIN = "/home/daoc7/orca_6_1_0_linux_x86-64_shared_openmpi418/orca"
 
 
 def generar_inp(xyz_file, job="optfreq", output_dir="inputs"):
