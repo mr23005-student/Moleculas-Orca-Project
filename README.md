@@ -60,34 +60,23 @@ streamlit run app.py
  
 `parser_orca.py`: Módulo encargado de extraer y procesar datos de los archivos de salida de ORCA. Sus funciones principales son:
 
-	- **_float_re**: Expresión regular para detectar números flotantes, incluyendo notación científica (E/D).
-
-	- **_to_float(x: str) -> float**: Convierte cadenas con notación Fortran (D/E) a float estándar de Python.
-
+	- **_float_re**: Expresión regular para detectar números flotantes, incluyendo notación científica (E/D).- **_to_float(x: str) -> float**: Convierte cadenas con notación Fortran (D/E) a float estándar de Python.
 	- **parse_ir(outfile)**: Abre el archivo de salida de ORCA, busca la sección "IR SPECTRUM" y extrae frecuencias e intensidades. Si no la encuentra, busca "VIBRATIONAL FREQUENCIES" y asigna intensidad simulada. Devuelve listas de frecuencias e intensidades.
-
 	- **process_ir_data(freqs, intensities, start=400, end=4000, points=1000, sigma=15.0)**: Genera un espectro IR suavizado a partir de las frecuencias e intensidades, normalizando y sumando picos gaussianos. Devuelve los valores del eje x, y y los picos principales.
-
 	- **parse_raman(outfile)**: Busca la sección "RAMAN SPECTRUM" y extrae pares frecuencia/intensidad en un diccionario. Si no la encuentra, busca "RAMAN ACTIVITIES" y extrae frecuencia/actividad. Devuelve un diccionario {frecuencia: intensidad/actividad}.
-
 	- **parse_nmr(outfile)**: Busca la sección "CHEMICAL SHIFTS" y extrae el índice del átomo, el elemento y el desplazamiento químico (ppm) en una lista de tuplas.
-
 	- **parse_energy_total(outfile)**: Busca la energía total en el archivo de salida, probando varias expresiones regulares en orden de prioridad. Devuelve el último valor encontrado o None si no hay coincidencias.
 
  - `spectra.py`:
  
 `spectra.py`: Módulo encargado de generar, graficar y exportar espectros IR a partir de los datos procesados. Sus funciones principales son:
-
 	- **plot_ir_spectrum(molfile, freqs, intensidades)**: Genera un espectro IR profesional y lo guarda como PNG. Procesa los datos, grafica el espectro suavizado, añade picos y etiquetas, configura la apariencia y guarda la imagen.
-
 	- **plot_ir_variants(molfile, freqs, intensidades)**: Genera tres variantes del espectro IR: picos discretos, espectro suavizado invertido y espectro etiquetado. Configura y guarda cada imagen como PNG.
-
 	- **export_csv(molfile, freqs, intensidades)**: Exporta frecuencias e intensidades IR a un archivo CSV. Si todas las intensidades son 0, asigna 1.0 a todas. Usa pandas para crear y guardar el archivo.
 
  - `visualize.py`:
  
 `visualize.py`: Módulo encargado de generar visualizaciones 3D interactivas de moléculas y capturas estáticas en PNG. Sus funciones principales son:
-
 	- **save_molecule_html(xyz_file, outdir="results/moleculas_3d")**: Genera un archivo HTML con la molécula en 3D y una captura PNG. Crea el directorio de salida, lee las coordenadas del archivo `.xyz`, genera la visualización interactiva con py3Dmol, guarda el HTML y usa Selenium para tomar una captura PNG. Si ocurre un error, retorna None para el PNG. Devuelve las rutas de los archivos generados.
 
 - `requirements.txt`: Lista de dependencias necesarias para el proyecto.
