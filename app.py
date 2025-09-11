@@ -145,14 +145,9 @@ try:
             progress_bar.progress(90)
 
             col1, col2 = st.columns(2)
+            
             with col1:
-<<<<<<< HEAD
-                if os.path.exists(png_path):
-                    st.subheader("📊 Espectro IR")
-                    st.image(png_path, caption=f"Espectro IR de {jobname}")
-
-=======
-                # Espectros IR
+             # Espectros IR
                 st.subheader("📊 Espectros IR")
                 
                 # Rutas de los tres tipos de espectros
@@ -172,9 +167,8 @@ try:
                 if os.path.exists(png_labeled):
                     st.markdown("### Espectro con Etiquetas")
                     st.image(png_labeled, caption="Espectro IR con frecuencias etiquetadas")
-
-                # CSV (mantener la funcionalidad existente)
->>>>>>> origin/main
+                    
+            # CSV (mantener la funcionalidad existente)
                 if os.path.exists(csv_path):
                     st.subheader("📑 Frecuencias (CSV)")
                     with open(csv_path, encoding="utf-8") as f:

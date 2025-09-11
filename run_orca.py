@@ -11,7 +11,7 @@ from reportlab.lib.units import cm
 import datetime
 #esta es la rama raman jaja
 # Ruta del ejecutable de ORCA
-ORCA_BIN = "/usr/bin/orca"
+ORCA_BIN = r"C:\Orca\orca.exe"
 
 
 def generar_inp(xyz_file, job="optfreq", output_dir="inputs"):
