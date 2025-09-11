@@ -68,7 +68,6 @@ def mostrar_molecula_3d(xyz_file):
          })
 
 
-
         # Fondo blanco como en publicaciones
         view.setBackgroundColor("0xffffff")
 
