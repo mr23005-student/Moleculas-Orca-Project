@@ -146,10 +146,35 @@ try:
 
             col1, col2 = st.columns(2)
             with col1:
+<<<<<<< HEAD
                 if os.path.exists(png_path):
                     st.subheader("📊 Espectro IR")
                     st.image(png_path, caption=f"Espectro IR de {jobname}")
 
+=======
+                # Espectros IR
+                st.subheader("📊 Espectros IR")
+                
+                # Rutas de los tres tipos de espectros
+                png_discrete = f"results/espectros/{jobname}_IR_discrete.png"
+                png_smooth = f"results/espectros/{jobname}_IR_smooth.png"
+                png_labeled = f"results/espectros/{jobname}_IR_labeled.png"
+                
+                # Mostrar los tres espectros
+                if os.path.exists(png_discrete):
+                    st.markdown("### Espectro de Picos Discretos")
+                    st.image(png_discrete, caption="Picos IR individuales")
+                
+                if os.path.exists(png_smooth):
+                    st.markdown("### Espectro Suavizado")
+                    st.image(png_smooth, caption="Espectro IR suavizado")
+                
+                if os.path.exists(png_labeled):
+                    st.markdown("### Espectro con Etiquetas")
+                    st.image(png_labeled, caption="Espectro IR con frecuencias etiquetadas")
+
+                # CSV (mantener la funcionalidad existente)
+>>>>>>> origin/main
                 if os.path.exists(csv_path):
                     st.subheader("📑 Frecuencias (CSV)")
                     with open(csv_path, encoding="utf-8") as f:
