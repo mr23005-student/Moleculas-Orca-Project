@@ -56,14 +56,32 @@ def mostrar_molecula_3d(xyz_file):
     try:
         with open(xyz_file, encoding="utf-8") as f:
             xyz_data = f.read()
-        view = py3Dmol.view(width=500, height=400)
+
+        # Crear visualizador más grande
+        view = py3Dmol.view(width=800, height=600)
         view.addModel(xyz_data, "xyz")
-        view.setStyle({"stick": {}})
+
+        # Estilo tipo "artículo científico"
+        view.setStyle({
+       "stick": {"radius": 0.08, "colorscheme": "Jmol"},   # enlaces cilíndricos finos
+       "sphere": {"scale": 0.3, "colorscheme": "Jmol"}     # átomos más pequeños
+         })
+
+
+
+        # Fondo blanco como en publicaciones
+        view.setBackgroundColor("0xffffff")
+
+        # Ajustar enfoque
         view.zoomTo()
+
+        # Renderizar en Streamlit
         html = view._make_html()
-        components.html(html, height=500, width=600)
+        components.html(html, height=600, width=800)
+
     except Exception as e:
         st.error(f"Error al visualizar molécula: {str(e)}")
+
 
 # -----------------------
 # Limpieza
