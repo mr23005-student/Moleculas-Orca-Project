@@ -59,7 +59,6 @@ streamlit run app.py
  - `parser_orca.py`:
  
 `parser_orca.py`: Módulo encargado de extraer y procesar datos de los archivos de salida de ORCA. Sus funciones principales son:
-
 	- **_float_re**: Expresión regular para detectar números flotantes, incluyendo notación científica (E/D).- **_to_float(x: str) -> float**: Convierte cadenas con notación Fortran (D/E) a float estándar de Python.
 	- **parse_ir(outfile)**: Abre el archivo de salida de ORCA, busca la sección "IR SPECTRUM" y extrae frecuencias e intensidades. Si no la encuentra, busca "VIBRATIONAL FREQUENCIES" y asigna intensidad simulada. Devuelve listas de frecuencias e intensidades.
 	- **process_ir_data(freqs, intensities, start=400, end=4000, points=1000, sigma=15.0)**: Genera un espectro IR suavizado a partir de las frecuencias e intensidades, normalizando y sumando picos gaussianos. Devuelve los valores del eje x, y y los picos principales.
