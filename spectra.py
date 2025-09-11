@@ -32,7 +32,7 @@ def plot_ir_spectrum(molfile, freqs, intensidades):
 
 
 def export_csv(molfile, freqs, intensidades):
-    """Exporta frecuencias e intensidades IR a CSV."""
+    """Exporta frecuencias e intensidades IR a CSV con UTF-8 y más estético."""
     os.makedirs("results/espectros", exist_ok=True)
     csvfile = os.path.join(
         "results/espectros",
@@ -43,8 +43,14 @@ def export_csv(molfile, freqs, intensidades):
     if not intensidades or all(i == 0.0 for i in intensidades):
         intensidades = [1.0] * len(freqs)
 
-    df = pd.DataFrame({"Frecuencia (cm-1)": freqs, "Intensidad": intensidades})
-    df.to_csv(csvfile, index=False)
+    df = pd.DataFrame({
+        "No.": list(range(1, len(freqs)+1)),
+        "Frecuencia (cm⁻¹)": freqs,
+        "Intensidad": intensidades
+    })
+
+    # Exportar con UTF-8 y BOM para que Excel lo abra correctamente
+    df.to_csv(csvfile, index=False, encoding="utf-8-sig")
 
     print(f"[OK] Datos exportados a: {csvfile}")
     return csvfile

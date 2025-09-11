@@ -5,6 +5,10 @@ from parser_orca import parse_ir, parse_energy_total
 from spectra import plot_ir_spectrum, export_csv
 from visualize import save_molecule_html
 from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import cm
+import datetime
 
 # Ruta del ejecutable de ORCA
 ORCA_BIN = r"C:\Orca\orca.exe"
@@ -37,39 +41,96 @@ def ejecutar_orca(inpfile, intermediates_dir="outputs"):
 
 
 def generar_reporte_pdf(molfile, energia, freqs, intensidades, png_file=None, mol_png=None):
-    """Genera un PDF con energía, frecuencias IR, espectro y molécula 3D."""
+    """
+    Genera un PDF con energía, lista de frecuencias (multipágina si es necesario),
+    espectro IR y captura de la molécula 3D.
+    Devuelve la ruta al PDF generado.
+    """
     os.makedirs("results/reportes", exist_ok=True)
-    pdf_file = os.path.join(
-        "results/reportes", os.path.basename(molfile).replace(".xyz", "_IR.pdf")
-    )
+    jobname = os.path.basename(molfile).replace(".xyz", "")
+    pdf_file = os.path.join("results/reportes", f"{jobname}_IR.pdf")
 
-    c = canvas.Canvas(pdf_file)
-    c.setFont("Helvetica-Bold", 14)
-    c.drawString(100, 800, f"Reporte ORCA: {os.path.basename(molfile)}")
+    width, height = letter
+    c = canvas.Canvas(pdf_file, pagesize=letter)
 
-    c.setFont("Helvetica", 12)
-    if energia:
-        c.drawString(100, 770, f"Energía total: {energia:.6f} Eh")
+    def draw_header():
+        c.setFont("Helvetica-Bold", 14)
+        c.drawString(2*cm, height - 2*cm, f"Reporte ORCA: {jobname}")
+        c.setFont("Helvetica", 10)
+        c.drawString(2*cm, height - 2.6*cm,
+                     f"Generado: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        c.setFont("Helvetica", 12)
+
+    # Página inicial y encabezado
+    draw_header()
+    y = height - 4*cm
+
+    # Energía
+    if energia is not None:
+        try:
+            c.drawString(2*cm, y, f"Energía total: {energia:.6f} Eh")
+        except Exception:
+            c.drawString(2*cm, y, f"Energía total: {energia}")
     else:
-        c.drawString(100, 770, "[ADVERTENCIA] Energía no encontrada")
+        c.drawString(2*cm, y, "[ADVERTENCIA] Energía no encontrada")
+    y -= 0.8*cm
 
-    c.drawString(100, 750, f"Número de frecuencias vibracionales: {len(freqs)}")
+    # Número de frecuencias
+    total_freqs = len(freqs) if freqs else 0
+    c.drawString(2*cm, y, f"Número de frecuencias vibracionales: {total_freqs}")
+    y -= 0.6*cm
 
-    # Listar primeras frecuencias
-    for i, (frec, inten) in enumerate(zip(freqs[:10], intensidades[:10])):
-        c.drawString(120, 730 - i * 20, f"{frec:.2f} cm-1 (Intensidad: {inten:.2f})")
+    # Listado de frecuencias (toda la lista, multipágina)
+    c.setFont("Helvetica", 10)
+    if freqs:
+        for i, (f, inten) in enumerate(zip(freqs, intensidades), start=1):
+            line = f"{i:03d}. {f:.2f} cm-1    Intensidad: {inten:.2f}"
+            c.drawString(2*cm, y, line)
+            y -= 0.5*cm
+            # Si nos acercamos al pie de página, crear nueva página y repetir encabezado
+            if y < 4*cm:
+                c.showPage()
+                draw_header()
+                y = height - 4*cm
+    else:
+        c.drawString(2*cm, y, "No se encontraron frecuencias")
+        y -= 0.5*cm
 
-    # 🔹 Insertar espectro IR
+    # Insertar espectro IR (en página propia para mejor layout)
     if png_file and os.path.exists(png_file):
-        c.drawImage(png_file, 100, 400, width=400, height=300)
+        try:
+            c.showPage()
+            draw_header()
+            # Ajustar imagen al ancho con márgenes
+            img_w = width - 4*cm
+            # altura proporcional (ajusta factor si quieres otra relación)
+            img_h = img_w * 0.6
+            img_x = 2*cm
+            img_y = (height - img_h) / 2
+            c.drawImage(png_file, img_x, img_y, width=img_w, height=img_h, preserveAspectRatio=True)
+        except Exception as e:
+            print(f"[WARN] No se pudo insertar espectro en PDF: {e}")
 
-    # 🔹 Insertar molécula 3D (captura PNG generada en visualize.py)
+    # Insertar imagen de la molécula (en página propia)
     if mol_png and os.path.exists(mol_png):
-        c.drawImage(mol_png, 100, 100, width=300, height=250)
+        try:
+            c.showPage()
+            draw_header()
+            img_w = width - 4*cm
+            img_h = img_w * 0.75
+            img_x = 2*cm
+            img_y = (height - img_h) / 2
+            c.drawImage(mol_png, img_x, img_y, width=img_w, height=img_h, preserveAspectRatio=True)
+        except Exception as e:
+            print(f"[WARN] No se pudo insertar imagen de la molécula en PDF: {e}")
 
+    # Guardar y reportar ruta
     c.save()
     print(f"[OK] Reporte generado: {pdf_file}")
+    # Imprimimos una línea con etiqueta para que app.py pueda capturarla fácilmente
+    print(f"[PDF] {pdf_file}")
     return pdf_file
+
 
 
 if __name__ == "__main__":
