@@ -115,13 +115,20 @@ INFO   : the flag for use of LIBINT has been found!
                                        INPUT FILE
 ================================================================================
 NAME = runs\water\inputs\water.inp
-|  1> ! B3LYP def2-SVP Opt Freq TightSCF
-|  2> 
-|  3> * xyz 0 1
-|  4> O    0.000000    0.000000    0.000000
-|  5> H    0.757000    0.586000    0.000000
-|  6> H   -0.757000    0.586000    0.000000
-|  7> *
+|  1> ! B3LYP def2-SVP Opt Freq TightSCF
+
+|  2> 
+
+|  3> * xyz 0 1
+
+|  4> O    0.000000    0.000000    0.000000
+
+|  5> H    0.757000    0.586000    0.000000
+
+|  6> H   -0.757000    0.586000    0.000000
+
+|  7> *
+
 |  8> 
 |  9>                          ****END OF INPUT****
 ================================================================================
@@ -236,12 +243,12 @@ Atom   2H    basis set group =>   2
 
  * One electron integrals 
  Pre-screening matrix                    ... done
- Shell pair data                         ... done (   0.000 sec)
+ Shell pair data                         ... done (   0.001 sec)
 
 Timings:
  Total evaluation time               ...     0.005 sec (   0.000 min)
- One electron matrix time            ...     0.015 sec (   0.000 min) =300.0%
- Schwartz matrix evaluation time     ...     0.292 sec (   0.005 min) =5840.0%
+ One electron matrix time            ...     0.027 sec (   0.000 min) =540.0%
+ Schwartz matrix evaluation time     ...     0.664 sec (   0.011 min) =13280.0%
 
 -------------------------------------------------------------------------------
                                  ORCA SCF
@@ -319,11 +326,11 @@ Convergence Tolerance:
 
 Diagonalization of the overlap matrix:
 Smallest eigenvalue                        ... 3.754e-02
-Time for diagonalization                   ...    0.003 sec
+Time for diagonalization                   ...    0.004 sec
 Threshold for overlap eigenvalues          ... 1.000e-08
 Number of eigenvalues below threshold      ... 0
-Time for construction of square roots      ...    0.002 sec
-Total time needed                          ...    0.005 sec
+Time for construction of square roots      ...    0.004 sec
+Total time needed                          ...    0.008 sec
 
 -------------------
 DFT GRID GENERATION
@@ -379,7 +386,7 @@ Diagonalizing the Hamiltonian                      ... done (   0.0 sec)
 Back transforming the eigenvectors                 ... done (   0.0 sec)
 Now organizing SCF variables                       ... done
                       ------------------
-                      INITIAL GUESS DONE (   0.3 sec)
+                      INITIAL GUESS DONE (   0.4 sec)
                       ------------------
 --------------
 SCF ITERATIONS
@@ -608,26 +615,26 @@ B(  0-O ,  1-H ) :   1.0110 B(  0-O ,  2-H ) :   1.0110
 TIMINGS
 -------
 
-Total SCF time: 0 days 0 hours 0 min 5 sec 
+Total SCF time: 0 days 0 hours 0 min 7 sec 
 
-Total time                  ....       5.036 sec
-Sum of individual times     ....       4.295 sec  ( 85.3%)
+Total time                  ....       7.955 sec
+Sum of individual times     ....       7.162 sec  ( 90.0%)
 
-Fock matrix formation       ....       3.804 sec  ( 75.5%)
-  XC integration            ....       0.444 sec  ( 11.7% of F)
-    Basis function eval.    ....       0.102 sec  ( 23.0% of XC)
-    Density eval.           ....       0.084 sec  ( 18.9% of XC)
-    XC-Functional eval.     ....       0.080 sec  ( 18.0% of XC)
-    XC-Potential eval.      ....       0.054 sec  ( 12.2% of XC)
-Diagonalization             ....       0.002 sec  (  0.0%)
-Density matrix formation    ....       0.001 sec  (  0.0%)
-Population analysis         ....       0.012 sec  (  0.2%)
-Initial guess               ....       0.276 sec  (  5.5%)
+Fock matrix formation       ....       6.337 sec  ( 79.7%)
+  XC integration            ....       0.866 sec  ( 13.7% of F)
+    Basis function eval.    ....       0.138 sec  ( 15.9% of XC)
+    Density eval.           ....       0.198 sec  ( 22.9% of XC)
+    XC-Functional eval.     ....       0.185 sec  ( 21.4% of XC)
+    XC-Potential eval.      ....       0.061 sec  (  7.0% of XC)
+Diagonalization             ....       0.003 sec  (  0.0%)
+Density matrix formation    ....       0.030 sec  (  0.4%)
+Population analysis         ....       0.015 sec  (  0.2%)
+Initial guess               ....       0.340 sec  (  4.3%)
 Orbital Transformation      ....       0.000 sec  (  0.0%)
 Orbital Orthonormalization  ....       0.000 sec  (  0.0%)
-DIIS solution               ....       0.059 sec  (  1.2%)
-SOSCF solution              ....       0.017 sec  (  0.3%)
-Grid generation             ....       0.124 sec  (  2.5%)
+DIIS solution               ....       0.270 sec  (  3.4%)
+SOSCF solution              ....       0.030 sec  (  0.4%)
+Grid generation             ....       0.137 sec  (  1.7%)
 
 -------------------------   --------------------
 FINAL SINGLE POINT ENERGY       -76.320956869719
@@ -672,12 +679,12 @@ MAX gradient                       ...    0.0134376510
 TIMINGS
 -------
 
-Total SCF gradient time            ...        0.605 sec
+Total SCF gradient time            ...        0.713 sec
 
 One electron gradient       ....       0.002 sec  (  0.3%)
-Prescreening matrices       ....       0.005 sec  (  0.8%)
-Two electron gradient       ....       0.029 sec  (  4.8%)
-XC gradient                 ....       0.247 sec  ( 40.8%)
+Prescreening matrices       ....       0.005 sec  (  0.7%)
+Two electron gradient       ....       0.032 sec  (  4.5%)
+XC gradient                 ....       0.335 sec  ( 47.0%)
 ------------------------------------------------------------------------------
                          ORCA GEOMETRY RELAXATION STEP
 ------------------------------------------------------------------------------
@@ -778,11 +785,11 @@ INTERNAL COORDINATES (A.U.)
 
 Diagonalization of the overlap matrix:
 Smallest eigenvalue                        ... 3.812e-02
-Time for diagonalization                   ...    0.002 sec
+Time for diagonalization                   ...    0.003 sec
 Threshold for overlap eigenvalues          ... 1.000e-08
 Number of eigenvalues below threshold      ... 0
 Time for construction of square roots      ...    0.002 sec
-Total time needed                          ...    0.004 sec
+Total time needed                          ...    0.005 sec
 
 -------------------
 DFT GRID GENERATION
@@ -815,7 +822,7 @@ Average number of large basis fcns per batch ...    20.94 (92.89%)
 Maximum spatial batch extension              ...  13.08, 20.95, 25.65 au
 Average spatial batch extension              ...   4.34,  5.67,  5.70 au
 
-Time for grid setup =    0.023 sec
+Time for grid setup =    0.033 sec
 
 --------------
 SCF ITERATIONS
@@ -882,7 +889,7 @@ Total Energy       :          -76.32113378 Eh           -2076.80363 eV
              **** ENERGY FILE WAS UPDATED (runs\water\inputs\water.en.tmp) ****
              **** THE GBW FILE WAS UPDATED (runs\water\inputs\water.gbw) ****
              **** DENSITY FILE WAS UPDATED (runs\water\inputs\water.scfp) ****
-Total SCF time: 0 days 0 hours 0 min 4 sec 
+Total SCF time: 0 days 0 hours 0 min 5 sec 
 
 -------------------------   --------------------
 FINAL SINGLE POINT ENERGY       -76.321133778205
@@ -927,12 +934,12 @@ MAX gradient                       ...    0.0020873147
 TIMINGS
 -------
 
-Total SCF gradient time            ...        0.740 sec
+Total SCF gradient time            ...        0.647 sec
 
 One electron gradient       ....       0.002 sec  (  0.3%)
-Prescreening matrices       ....       0.007 sec  (  0.9%)
-Two electron gradient       ....       0.033 sec  (  4.5%)
-XC gradient                 ....       0.312 sec  ( 42.2%)
+Prescreening matrices       ....       0.005 sec  (  0.8%)
+Two electron gradient       ....       0.030 sec  (  4.6%)
+XC gradient                 ....       0.273 sec  ( 42.2%)
 ------------------------------------------------------------------------------
                          ORCA GEOMETRY RELAXATION STEP
 ------------------------------------------------------------------------------
@@ -1032,11 +1039,11 @@ INTERNAL COORDINATES (A.U.)
 
 Diagonalization of the overlap matrix:
 Smallest eigenvalue                        ... 3.805e-02
-Time for diagonalization                   ...    0.003 sec
+Time for diagonalization                   ...    0.002 sec
 Threshold for overlap eigenvalues          ... 1.000e-08
 Number of eigenvalues below threshold      ... 0
 Time for construction of square roots      ...    0.002 sec
-Total time needed                          ...    0.005 sec
+Total time needed                          ...    0.004 sec
 
 -------------------
 DFT GRID GENERATION
@@ -1069,7 +1076,7 @@ Average number of large basis fcns per batch ...    20.96 (93.13%)
 Maximum spatial batch extension              ...  13.09, 20.95, 25.65 au
 Average spatial batch extension              ...   4.39,  5.70,  5.71 au
 
-Time for grid setup =    0.025 sec
+Time for grid setup =    0.031 sec
 
 --------------
 SCF ITERATIONS
@@ -1135,7 +1142,7 @@ Total Energy       :          -76.32115029 Eh           -2076.80408 eV
              **** ENERGY FILE WAS UPDATED (runs\water\inputs\water.en.tmp) ****
              **** THE GBW FILE WAS UPDATED (runs\water\inputs\water.gbw) ****
              **** DENSITY FILE WAS UPDATED (runs\water\inputs\water.scfp) ****
-Total SCF time: 0 days 0 hours 0 min 4 sec 
+Total SCF time: 0 days 0 hours 0 min 2 sec 
 
 -------------------------   --------------------
 FINAL SINGLE POINT ENERGY       -76.321150289569
@@ -1180,12 +1187,12 @@ MAX gradient                       ...    0.0006600533
 TIMINGS
 -------
 
-Total SCF gradient time            ...        1.508 sec
+Total SCF gradient time            ...        0.605 sec
 
-One electron gradient       ....       0.003 sec  (  0.2%)
-Prescreening matrices       ....       0.007 sec  (  0.5%)
-Two electron gradient       ....       0.050 sec  (  3.3%)
-XC gradient                 ....       0.395 sec  ( 26.2%)
+One electron gradient       ....       0.003 sec  (  0.5%)
+Prescreening matrices       ....       0.005 sec  (  0.8%)
+Two electron gradient       ....       0.029 sec  (  4.8%)
+XC gradient                 ....       0.255 sec  ( 42.1%)
 ------------------------------------------------------------------------------
                          ORCA GEOMETRY RELAXATION STEP
 ------------------------------------------------------------------------------
@@ -1285,11 +1292,11 @@ INTERNAL COORDINATES (A.U.)
 
 Diagonalization of the overlap matrix:
 Smallest eigenvalue                        ... 3.796e-02
-Time for diagonalization                   ...    0.002 sec
+Time for diagonalization                   ...    0.003 sec
 Threshold for overlap eigenvalues          ... 1.000e-08
 Number of eigenvalues below threshold      ... 0
-Time for construction of square roots      ...    0.001 sec
-Total time needed                          ...    0.004 sec
+Time for construction of square roots      ...    0.002 sec
+Total time needed                          ...    0.005 sec
 
 -------------------
 DFT GRID GENERATION
@@ -1322,7 +1329,7 @@ Average number of large basis fcns per batch ...    20.98 (92.98%)
 Maximum spatial batch extension              ...  13.09, 20.95, 25.65 au
 Average spatial batch extension              ...   4.37,  5.81,  5.65 au
 
-Time for grid setup =    0.023 sec
+Time for grid setup =    0.031 sec
 
 --------------
 SCF ITERATIONS
@@ -1361,8 +1368,8 @@ Grids for H and He will be reduced by one unit
 # of grid points (after weights+screening)   ...  12900 (   0.0 sec)
 nearest neighbour list constructed           ...    0.0 sec
 Grid point re-assignment to atoms done       ...    0.0 sec
-Grid point division into batches done        ...    0.2 sec
-Reduced shell lists constructed in    0.3 sec
+Grid point division into batches done        ...    0.1 sec
+Reduced shell lists constructed in    0.1 sec
 
 Total number of grid points                  ...    12900
 Total number of batches                      ...      204
@@ -1375,8 +1382,8 @@ Average number of large basis fcns per batch ...    19.23 (93.33%)
 Maximum spatial batch extension              ...  16.88, 16.88, 21.92 au
 Average spatial batch extension              ...   3.05,  3.41,  3.50 au
 
-Final grid set up in    0.3 sec
-Final integration                            ... done (   0.2 sec)
+Final grid set up in    0.1 sec
+Final integration                            ... done (   0.1 sec)
 Change in XC energy                          ...    -0.000508877
 Integrated number of electrons               ...     9.999974299
 Previous integrated no of electrons          ...     9.997456619
@@ -1433,12 +1440,12 @@ MAX gradient                       ...    0.0000467688
 TIMINGS
 -------
 
-Total SCF gradient time            ...        0.643 sec
+Total SCF gradient time            ...        0.635 sec
 
-One electron gradient       ....       0.002 sec  (  0.3%)
+One electron gradient       ....       0.003 sec  (  0.5%)
 Prescreening matrices       ....       0.005 sec  (  0.8%)
-Two electron gradient       ....       0.030 sec  (  4.7%)
-XC gradient                 ....       0.267 sec  ( 41.5%)
+Two electron gradient       ....       0.029 sec  (  4.6%)
+XC gradient                 ....       0.254 sec  ( 40.0%)
 ------------------------------------------------------------------------------
                          ORCA GEOMETRY RELAXATION STEP
 ------------------------------------------------------------------------------
@@ -1577,12 +1584,12 @@ Atom   2H    basis set group =>   2
 
  * One electron integrals 
  Pre-screening matrix                    ... done
- Shell pair data                         ... done (   0.001 sec)
+ Shell pair data                         ... done (   0.000 sec)
 
 Timings:
- Total evaluation time               ...     0.005 sec (   0.000 min)
- One electron matrix time            ...     0.012 sec (   0.000 min) =240.0%
- Schwartz matrix evaluation time     ...     0.301 sec (   0.005 min) =6020.0%
+ Total evaluation time               ...     0.004 sec (   0.000 min)
+ One electron matrix time            ...     0.011 sec (   0.000 min) =275.0%
+ Schwartz matrix evaluation time     ...     0.242 sec (   0.004 min) =6050.0%
 
 -------------------------------------------------------------------------------
                                  ORCA SCF
@@ -1660,11 +1667,11 @@ Convergence Tolerance:
 
 Diagonalization of the overlap matrix:
 Smallest eigenvalue                        ... 3.796e-02
-Time for diagonalization                   ...    0.005 sec
+Time for diagonalization                   ...    0.002 sec
 Threshold for overlap eigenvalues          ... 1.000e-08
 Number of eigenvalues below threshold      ... 0
 Time for construction of square roots      ...    0.001 sec
-Total time needed                          ...    0.006 sec
+Total time needed                          ...    0.003 sec
 
 ---------------------
 INITIAL GUESS: MOREAD
@@ -1708,7 +1715,7 @@ Average number of large basis fcns per batch ...    20.98 (92.98%)
 Maximum spatial batch extension              ...  13.09, 20.95, 25.65 au
 Average spatial batch extension              ...   4.37,  5.81,  5.65 au
 
-Time for grid setup =    0.019 sec
+Time for grid setup =    0.031 sec
 
 --------------
 SCF ITERATIONS
@@ -1761,7 +1768,7 @@ Maximum spatial batch extension              ...  16.88, 16.88, 21.92 au
 Average spatial batch extension              ...   3.11,  3.46,  3.49 au
 
 Final grid set up in    0.1 sec
-Final integration                            ... done (   0.1 sec)
+Final integration                            ... done (   0.2 sec)
 Change in XC energy                          ...    -0.000508815
 Integrated number of electrons               ...     9.999974307
 Previous integrated no of electrons          ...     9.997456863
@@ -1928,26 +1935,26 @@ B(  0-O ,  1-H ) :   1.0085 B(  0-O ,  2-H ) :   1.0085
 TIMINGS
 -------
 
-Total SCF time: 0 days 0 hours 0 min 3 sec 
+Total SCF time: 0 days 0 hours 0 min 2 sec 
 
-Total time                  ....       3.027 sec
-Sum of individual times     ....       2.298 sec  ( 75.9%)
+Total time                  ....       2.431 sec
+Sum of individual times     ....       1.764 sec  ( 72.6%)
 
-Fock matrix formation       ....       1.984 sec  ( 65.5%)
-  XC integration            ....       0.285 sec  ( 14.4% of F)
-    Basis function eval.    ....       0.054 sec  ( 18.9% of XC)
-    Density eval.           ....       0.072 sec  ( 25.3% of XC)
-    XC-Functional eval.     ....       0.085 sec  ( 29.8% of XC)
-    XC-Potential eval.      ....       0.022 sec  (  7.7% of XC)
+Fock matrix formation       ....       1.586 sec  ( 65.2%)
+  XC integration            ....       0.380 sec  ( 24.0% of F)
+    Basis function eval.    ....       0.048 sec  ( 12.6% of XC)
+    Density eval.           ....       0.107 sec  ( 28.2% of XC)
+    XC-Functional eval.     ....       0.112 sec  ( 29.5% of XC)
+    XC-Potential eval.      ....       0.017 sec  (  4.5% of XC)
 Diagonalization             ....       0.000 sec  (  0.0%)
 Density matrix formation    ....       0.000 sec  (  0.0%)
-Population analysis         ....       0.165 sec  (  5.5%)
+Population analysis         ....       0.013 sec  (  0.5%)
 Initial guess               ....       0.003 sec  (  0.1%)
 Orbital Transformation      ....       0.000 sec  (  0.0%)
-Orbital Orthonormalization  ....       0.001 sec  (  0.0%)
+Orbital Orthonormalization  ....       0.000 sec  (  0.0%)
 DIIS solution               ....       0.000 sec  (  0.0%)
-SOSCF solution              ....       0.016 sec  (  0.5%)
-Grid generation             ....       0.130 sec  (  4.3%)
+SOSCF solution              ....       0.005 sec  (  0.2%)
+Grid generation             ....       0.157 sec  (  6.5%)
 
 -------------------------   --------------------
 FINAL SINGLE POINT ENERGY       -76.321155480372
@@ -2020,26 +2027,26 @@ Setting up DFT Hessian calculations              ...
 Electron density on the grid                     ... found on disk
 Electron density on the final grid               ... found on disk
 Building xc-kernel on the grid                   ... done   (      0.0 sec)
-Building xc-kernel on the final grid             ... done   (      0.1 sec)
-                                                     done   (      0.2 sec)
+Building xc-kernel on the final grid             ... done   (      0.0 sec)
+                                                     done   (      0.1 sec)
 
 Nuclear repulsion Hessian                        ... done   (      0.0 sec)
 
 ----------------------------------------------
 Forming right-hand sides of CP-SCF equations     ...
 ----------------------------------------------
-One electron integral derivatives                ... done   (      0.4 sec)
+One electron integral derivatives                ... done   (      0.3 sec)
 Transforming the overlap derivative matrices     ... done   (      0.0 sec)
 Making the Q(x) pseudodensities                  ... done   (      0.0 sec)
 Adding the E*S(x)*S(y) terms to the Hessian      ... done   (      0.0 sec)
-Calculating energy weighted overlap derivatives  ... done   (      0.3 sec)
+Calculating energy weighted overlap derivatives  ... done   (      0.4 sec)
 Two electron integral derivatives                ... done   (      0.4 sec)
-Exchange-correlation integral derivatives        ... done   (      0.9 sec)
+Exchange-correlation integral derivatives        ... done   (      1.6 sec)
 tr(F(y)Q(x)) contribution to the Hessian         ... done   (      0.0 sec)
 Response fock operator R(S(x))                   ... done   (      0.3 sec)
-XC Response fock operator R(S(x))                ... done   (      0.2 sec)
+XC Response fock operator R(S(x))                ... done   (      0.4 sec)
 tr(F(y)S(x)) contribution to the Hessian         ... done   (      0.0 sec)
-Transforming and finalizing RHSs                 ... done   (      0.1 sec)
+Transforming and finalizing RHSs                 ... done   (      0.0 sec)
 
 ----------------------------------------------
 Solving the CP-SCF equations                     ...
@@ -2050,14 +2057,14 @@ Solving the CP-SCF equations                     ...
      CP-SCF ITERATION   3:      0.000000080367
      CP-SCF ITERATION   4:      0.000000001518
 
-                                                 ... done   (      3.7 sec)
+                                                 ... done   (      3.6 sec)
 Forming perturbed density Hessian contributions  ... done   (      0.0 sec)
 Making the perturbed densities                   ... done   (      0.0 sec)
-2nd integral derivative contribs                 ... done   (      0.7 sec)
-Exchange-correlation Hessian                     ... done   (      1.3 sec)
+2nd integral derivative contribs                 ... done   (      0.9 sec)
+Exchange-correlation Hessian                     ... done   (      1.8 sec)
 Dipol derivatives                                ... done   (      0.3 sec)
 
-Total SCF Hessian time: 0 days 0 hours 0 min 9 sec 
+Total SCF Hessian time: 0 days 0 hours 0 min 11 sec 
 
 Writing the Hessian file to the disk             ... done
 
@@ -2254,11 +2261,11 @@ G-E(el)                           ...      0.00355071 Eh      2.23 kcal/mol
 
 Timings for individual modules:
 
-Sum of individual times         ...       42.204 sec (=   0.703 min)
-GTO integral calculation        ...        5.212 sec (=   0.087 min)  12.3 %
-SCF iterations                  ...       21.871 sec (=   0.365 min)  51.8 %
-SCF Gradient evaluation         ...        4.365 sec (=   0.073 min)  10.3 %
-Geometry relaxation             ...        0.475 sec (=   0.008 min)   1.1 %
-Analytical frequency calculation...       10.281 sec (=   0.171 min)  24.4 %
+Sum of individual times         ...       43.653 sec (=   0.728 min)
+GTO integral calculation        ...        5.964 sec (=   0.099 min)  13.7 %
+SCF iterations                  ...       22.362 sec (=   0.373 min)  51.2 %
+SCF Gradient evaluation         ...        3.349 sec (=   0.056 min)   7.7 %
+Geometry relaxation             ...        0.612 sec (=   0.010 min)   1.4 %
+Analytical frequency calculation...       11.366 sec (=   0.189 min)  26.0 %
                              ****ORCA TERMINATED NORMALLY****
-TOTAL RUN TIME: 0 days 0 hours 0 minutes 43 seconds 237 msec
+TOTAL RUN TIME: 0 days 0 hours 0 minutes 44 seconds 641 msec
